@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class MessageDao {
 		PreparedStatement ps = null;
 		try{
 			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT category FROM messages GROUP BY category");
+			sql.append("SELECT * FROM messages GROUP BY category");
 
 			ps = connection.prepareStatement(sql.toString());
 
@@ -74,10 +75,22 @@ public class MessageDao {
 		List<Message> ret = new ArrayList<Message>();
 		try {
 			while (rs.next()) {
+				int id = rs.getInt("id");
+				int userId = rs.getInt("user_id");
+				String title = rs.getString("title");
+				String text = rs.getString("text");
 				String category = rs.getString("category");
+				Timestamp insertDate = rs.getTimestamp("insert_date");
+				Timestamp updateDate = rs.getTimestamp("update_date");
 
 				Message message = new Message();
+				message.setId(id);
+				message.setId(userId);
+				message.setTitle(title);
+				message.setText(text);
 				message.setCategory(category);
+				message.setInsertDate(insertDate);
+				message.setUpdateDate(updateDate);
 
 				ret.add(message);
 			}
@@ -87,6 +100,22 @@ public class MessageDao {
 		}
 	}
 
+	public Message getOldDate(Connection connection) {
 
+		PreparedStatement ps = null;
+		try{
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT * FROM user_message ORDER BY insert_date ASC limit 1");
 
+			ps = connection.prepareStatement(sql.toString());
+
+			ResultSet rs = ps.executeQuery();
+			List<Message> ret = toMessageList(rs);
+			return ret.get(0);
+		} catch (SQLException e) {
+			throw new SQLRuntimeException(e);
+		} finally {
+			close(ps);
+		}
+	}
 }

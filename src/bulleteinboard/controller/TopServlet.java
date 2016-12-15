@@ -1,6 +1,8 @@
 package bulleteinboard.controller;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -26,32 +28,38 @@ public class TopServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 
-
-
 		String category = request.getParameter("category");
 		String fromDate = request.getParameter("fromDate");
 		String toDate = request.getParameter("toDate");
+		System.out.println(category);
+
 
 		if(StringUtils.isEmpty(fromDate)) {
 			// fromDateが空・NULLだったら、DBから一番古い日付を取得し、セットする
-//			String date = xxxxx
-//			fromDate = date;
+			String date = new MessageService().getOldDate().getInsertDate().toString();
+			fromDate = date;
 		}
+
 		if(StringUtils.isEmpty(toDate)) {
 			// toDateが空・NULLだったら、今の時刻を取得し、セットする
-//			String date = xxxxx
-//			toDate = date;
+			String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+			toDate = date;
 		}
+//		System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+
+
 
 
 
 		List<UserMessage> messages = new MessageService().getMessage(category, fromDate, toDate);
 		List<UserComment> comments = new CommentService().getComment();
 		List<Message> categories = new MessageService().getCategories();
+		Message oldDate = new MessageService().getOldDate();
 
 		request.setAttribute("messages", messages);
 		request.setAttribute("comments", comments);
 		request.setAttribute("categories", categories);
+		request.setAttribute("oldDates", oldDate);
 
 
 		request.getRequestDispatcher("/top.jsp").forward(request, response);

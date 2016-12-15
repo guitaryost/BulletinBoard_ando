@@ -79,4 +79,27 @@ public class MessageService {
 			close(connection);
 		}
 	}
+
+	public Message getOldDate() {
+
+		Connection connection = null;
+		try{
+			connection = getConnection();
+
+			MessageDao messageDao = new MessageDao();
+			Message ret = messageDao.getOldDate(connection);
+
+			commit(connection);
+
+			return ret;
+		} catch (RuntimeException e) {
+			rollback(connection);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			throw e;
+		} finally {
+			close(connection);
+		}
+	}
 }

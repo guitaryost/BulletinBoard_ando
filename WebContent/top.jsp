@@ -44,7 +44,7 @@
 			</c:forEach>
 		</select>
 		&nbsp;&nbsp;&nbsp;&nbsp;
-		<label>【日付】<input type="date" name="date"value="from">～<input type="date" name="date"></label>
+		<label>【日付選択】<input type="date" name="fromDate"value="from">～<input type="date" name="toDate"></label>
 		<input type="submit" value="送信">
 	</form>
 	<br />
