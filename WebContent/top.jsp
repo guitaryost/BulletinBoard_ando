@@ -35,6 +35,23 @@
 	</c:if>
 
 
+	<form action="./" method="get">
+		<div><label for="search">絞込み検索</label></div>
+		【カテゴリー選択】<select name="category">
+			<option value=""></option>
+			<c:forEach var="c" items="${categories}">
+				<option value="${c.category}"><c:out value="${c.category}" /></option>
+			</c:forEach>
+		</select>
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		<label>【日付】<input type="date" name="date"value="from">～<input type="date" name="date"></label>
+		<input type="submit" value="送信">
+	</form>
+	<br />
+	<br />
+
+
+
 	<div class="messages">
 		<c:forEach items="${messages}" var="message">
 			<div class="name-date">
@@ -42,8 +59,10 @@
 					size="-2"><fmt:formatDate value="${message.insertDate}"
 						pattern="yyyy/MM/dd HH:mm:ss" /></font><br />
 			</div>
-			<div class="title">
-				タイトル：<font color="blue"><c:out value="${message.title}" /></font><br />
+			<div class="title_category">
+				タイトル：<font color="blue"><c:out value="${message.title}" /></font>
+				<font size="-1">【カテゴリー：<c:out value="${message.category}" />】</font>
+
 			</div>
 			<div class="text">
 				<c:out value="${message.text}" />
@@ -62,6 +81,8 @@
 				<c:remove var="errorMessages" scope="session" />
 			</c:if>
 
+			<br />
+			<br />
 			<c:forEach items="${comments}" var="comment">
 				<c:if test="${message.id == comment.messageId}">
 					<div class="name-date">
