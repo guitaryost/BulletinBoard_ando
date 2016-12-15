@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+
 import bulleteinboard.bean.Branch;
 import bulleteinboard.bean.Department;
 import bulleteinboard.bean.User;
@@ -26,16 +28,13 @@ public class SignUpServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws IOException, ServletException {
 
-		//branch型のリストを取得
 		List<Branch> branches = new BranchService().getBranches();
-		//リクエストでブランチのセットアトリビュート
 		request.setAttribute("branches", branches);
 
 		List<Department>departments = new DepartmentService().getDepatments();
 		request.setAttribute("departments", departments);
 
 		request.getRequestDispatcher("signup.jsp").forward(request, response);
-
 	}
 
 	@Override
@@ -54,35 +53,45 @@ public class SignUpServlet extends HttpServlet {
 		user.setDepartmentId(Integer.parseInt(request.getParameter("department")));
 		user.setAccount(Boolean.parseBoolean(request.getParameter("account")));
 
-
 		if (isValid(request, messages) == true) {
 			new UserService().register(user);
-			response.sendRedirect("./");
+			response.sendRedirect("administer");
 		} else {
-			request.setAttribute("signupUser",user);
+			session.setAttribute("signupUser",user);
 			session.setAttribute("errorMessages", messages);
-			request.getRequestDispatcher("signup.jsp").forward(request, response);
+			response.sendRedirect("signup");
 		}
-
 	}
 
+
 	private boolean isValid(HttpServletRequest request, List<String> messages) {
-		return true;
-//		String account = request.getParameter("account");
-//		String password = request.getParameter("password");
-//
-//		if (StringUtils.isEmpty(login_id) == true) {
-//			messages.add("ログインIDを入力してください");
+		String loginId = request.getParameter("login_id");
+		String password = request.getParameter("password");
+		String name = request.getParameter("name");
+
+		if (StringUtils.isEmpty(loginId) == true) {
+			messages.add("ログインIDを入力してください");
+		}
+//		if (6 <= loginId.length() && loginId.length() >=20) {
+//			messages.add("ログインIDは6文字以上20文字以下で登録してください");
 //		}
-//		if (StringUtils.isEmpty(password) == true) {
-//			messages.add("パスワードを入力してください");
+//		if(loginId.matches("^[0-9a-zA-Z]+$")){
+//			messages.add("ログインIDは半角英数字で登録してください");
 //		}
-//
-//		if (messages.size() == 0) {
-//			return true;
-//		} else {
-//			return false;
-//		}
+
+
+		if (StringUtils.isEmpty(password) == true) {
+			messages.add("パスワードを入力してください");
+		}
+		if (StringUtils.isEmpty(name) == true) {
+			messages.add("名前を入力してください");
+		}
+
+		if (messages.size() == 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

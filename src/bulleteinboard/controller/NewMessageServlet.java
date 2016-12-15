@@ -33,26 +33,25 @@ public class NewMessageServlet extends HttpServlet{
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response)throws IOException, ServletException{
 
-		HttpSession session = request.getSession();
-
 		List<String> messages = new ArrayList<String>();
 
+		HttpSession session = request.getSession();
+
+		User user = (User)session.getAttribute("loginUser");
+
+		Message message = new Message();
+		message.setTitle(request.getParameter("title"));
+		message.setUserId(user.getId());
+		message.setText(request.getParameter("message"));
+		message.setCategory(request.getParameter("category"));
+
 		if (isValid(request, messages) == true){
-
-			User user = (User)session.getAttribute("loginUser");
-
-			Message message = new Message();
-			message.setTitle(request.getParameter("title"));
-			message.setUserId(user.getId());
-			message.setText(request.getParameter("message"));
-			message.setCategory(request.getParameter("category"));
-
 			new MessageService().register(message);
-
 			response.sendRedirect("./");
 		}else{
+			request.setAttribute("newMessage", message);
 			session.setAttribute("errorMessages", messages);
-			response.sendRedirect("newMessage");
+			request.getRequestDispatcher("newMessage.jsp").forward(request, response);
 
 		}
 	}
@@ -68,7 +67,7 @@ public class NewMessageServlet extends HttpServlet{
 
 		String message = request.getParameter("message");
 		if(StringUtils.isEmpty(message) == true){
-			messages.add("メッセージを入力してください");
+			messages.add("本文を入力してください");
 		}
 		if (1000 < message.length()) {
 			messages.add("1000文字以下で入力してください");
@@ -76,7 +75,7 @@ public class NewMessageServlet extends HttpServlet{
 
 		String category = request.getParameter("category");
 		if(StringUtils.isEmpty(category) == true){
-			messages.add("メッセージを入力してください");
+			messages.add("カテゴリーを入力してください");
 		}
 		if (10 < category.length()) {
 			messages.add("10文字以下で入力してください");

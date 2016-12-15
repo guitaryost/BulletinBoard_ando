@@ -34,6 +34,7 @@ public class LoginServlet extends HttpServlet{
 
 		//LoginServiceを経由
 		LoginService loginService = new LoginService();
+
 		User user = loginService.login(loginId, password);
 		//Userオブジェクトが取得できればセッションにセット、さらにトップ画面に遷移させる
 		HttpSession session = request.getSession();

@@ -8,6 +8,26 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>ユーザー管理</title>
+
+<script type="text/javascript">
+<!--
+
+function check(account){
+	str = "停止";
+	if(account == "false") {
+		str = "復活";
+	}
+
+	if(window.confirm('アカウントを' + str + 'しますか？')){
+		return true;
+	}else{
+		window.alert('キャンセルされました');
+		return false;
+	}
+}
+// -->
+</script>
+
 </head>
 <body>
 <div class="main-contents">
@@ -31,8 +51,20 @@
 				<tr>
 				<td align="center" width="200"><div class="login-id"><c:out value="${user.loginId}" /><br /></div></td>
 				<td align="center" width="200"><div class="name"><c:out value="${user.name}" /></div></td>
-				<td align="center" width="200"><div class="edit"><a href="http://www.yahoo.co.jp" target="_blank">編集する</a></div></td>
-				<td align="center" width="200"><input type="submit" value="停止">&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="起動"></td>
+				<td align="center" width="200"><div class="edit"><a href="edit?id=${user.id}">編集する</a></div></td>
+				<td align="center" width="200">
+
+					<form action="administer" method="post" onSubmit='return check("${user.account}")'>
+						<input type="hidden" name="id" value="${user.id}">
+						<c:if test="${user.account == true}">
+							<input type="hidden" name="account" value="false">
+							<input type="submit" style="color:red;" value=" 停止">
+						</c:if>
+						<c:if test="${user.account == false}">
+							<input type="hidden" name="account" value="true">
+							<input type="submit" value="復活">
+						</c:if>
+					</form>
 				</tr>
 				</table>
 			</c:forEach>

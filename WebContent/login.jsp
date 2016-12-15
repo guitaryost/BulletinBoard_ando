@@ -15,7 +15,7 @@
 	<div class="errorMessages">
 		<ul>
 			<c:forEach items="${errorMessages}" var="message">
-				<li><c:out value="${message}" />
+				<li><FONT color="#ff0000"><c:out value="${message}" /></FONT>
 			</c:forEach>
 		</ul>
 	</div>
@@ -27,6 +27,8 @@
 
 	<label for="password">パスワード</label>
 	<input name="password" type="password" id="password"/> <br />
+
+	<c:remove var="loginId" scope="session"/>
 
 	<input type="submit" value="ログイン" /> <br />
 
