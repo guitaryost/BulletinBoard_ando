@@ -28,7 +28,7 @@ public class AuthorityFilter implements Filter{
 				User user = (User) session.getAttribute("loginUser");
 
 				List<String> errorMessage = new ArrayList<String>();
-				errorMessage.add("権限がありません");
+				errorMessage.add("！権限がありません");
 
 				//権限がなければホームに飛ばす
 				if(user.getBranchId() != 1 || user.getDepartmentId() != 1){

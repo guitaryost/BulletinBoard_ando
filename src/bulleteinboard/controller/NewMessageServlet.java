@@ -33,16 +33,16 @@ public class NewMessageServlet extends HttpServlet{
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response)throws IOException, ServletException{
 
-		List<String> messages = new ArrayList<String>();
-
 		HttpSession session = request.getSession();
+
+		List<String> messages = new ArrayList<String>();
 
 		User user = (User)session.getAttribute("loginUser");
 
 		Message message = new Message();
 		message.setTitle(request.getParameter("title"));
 		message.setUserId(user.getId());
-		message.setText(request.getParameter("message"));
+		message.setText(request.getParameter("text"));
 		message.setCategory(request.getParameter("category"));
 
 		if (isValid(request, messages) == true){
@@ -58,27 +58,28 @@ public class NewMessageServlet extends HttpServlet{
 
 	private boolean isValid(HttpServletRequest request, List<String> messages){
 		String title = request.getParameter("title");
+		String text = request.getParameter("text");
+		String category = request.getParameter("category");
+
 		if(StringUtils.isEmpty(title) == true){
 			messages.add("タイトルを入力してください");
 		}
 		if (50 < title.length()) {
-			messages.add("50文字以下で入力してください");
+			messages.add("タイトルは50文字以下で入力してください");
 		}
 
-		String message = request.getParameter("message");
-		if(StringUtils.isEmpty(message) == true){
+		if(StringUtils.isEmpty(text) == true){
 			messages.add("本文を入力してください");
 		}
-		if (1000 < message.length()) {
-			messages.add("1000文字以下で入力してください");
+		if (1000 < text.length()) {
+			messages.add("本文は1000文字以下で入力してください");
 		}
 
-		String category = request.getParameter("category");
 		if(StringUtils.isEmpty(category) == true){
 			messages.add("カテゴリーを入力してください");
 		}
 		if (10 < category.length()) {
-			messages.add("10文字以下で入力してください");
+			messages.add("カテゴリーは10文字以下で入力してください");
 		}
 		if (messages.size() == 0) {
 			return true;

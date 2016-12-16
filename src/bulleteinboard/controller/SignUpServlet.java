@@ -57,9 +57,16 @@ public class SignUpServlet extends HttpServlet {
 			new UserService().register(user);
 			response.sendRedirect("administer");
 		} else {
-			session.setAttribute("signupUser",user);
+
+			List<Branch> branches = new BranchService().getBranches();
+			request.setAttribute("branches", branches);
+
+			List<Department>departments = new DepartmentService().getDepatments();
+			request.setAttribute("departments", departments);
+
+			request.setAttribute("signupUser",user);
 			session.setAttribute("errorMessages", messages);
-			response.sendRedirect("signup");
+			request.getRequestDispatcher("signup.jsp").forward(request, response);
 		}
 	}
 
@@ -69,22 +76,27 @@ public class SignUpServlet extends HttpServlet {
 		String password = request.getParameter("password");
 		String name = request.getParameter("name");
 
+
+
 		if (StringUtils.isEmpty(loginId) == true) {
 			messages.add("ログインIDを入力してください");
 		}
-//		if (6 <= loginId.length() && loginId.length() >=20) {
-//			messages.add("ログインIDは6文字以上20文字以下で登録してください");
-//		}
-//		if(loginId.matches("^[0-9a-zA-Z]+$")){
-//			messages.add("ログインIDは半角英数字で登録してください");
-//		}
-
+		if (6 > loginId.length() || loginId.length() > 20) {
+			messages.add("ログインIDは6文字以上20文字以下で登録してください");
+		}
+		if(!loginId.matches("[0-9a-zA-Z]+$")){
+			messages.add("ログインIDは半角英数字で登録してください");
+		}
 
 		if (StringUtils.isEmpty(password) == true) {
 			messages.add("パスワードを入力してください");
+
 		}
 		if (StringUtils.isEmpty(name) == true) {
 			messages.add("名前を入力してください");
+		}
+		if (name.length() > 10) {
+			messages.add("名前は10文字以下で登録してください");
 		}
 
 		if (messages.size() == 0) {

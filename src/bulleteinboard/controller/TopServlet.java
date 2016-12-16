@@ -31,7 +31,6 @@ public class TopServlet extends HttpServlet {
 		String category = request.getParameter("category");
 		String fromDate = request.getParameter("fromDate");
 		String toDate = request.getParameter("toDate");
-		System.out.println(category);
 
 
 		if(StringUtils.isEmpty(fromDate)) {
@@ -45,14 +44,9 @@ public class TopServlet extends HttpServlet {
 			String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 			toDate = date;
 		}
-//		System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-
-
-
-
 
 		List<UserMessage> messages = new MessageService().getMessage(category, fromDate, toDate);
-		List<UserComment> comments = new CommentService().getComment();
+		List<UserComment> comments = new CommentService().getComments();
 		List<Message> categories = new MessageService().getCategories();
 		Message oldDate = new MessageService().getOldDate();
 

@@ -34,7 +34,7 @@ public class CommentService {
 	}
 	private static final int LIMIT_NUM = 1000;
 
-	public List<UserComment> getComment() {
+	public List<UserComment> getComments() {
 
 		Connection connection = null;
 		try {

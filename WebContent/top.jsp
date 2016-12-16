@@ -23,16 +23,30 @@
 	<br />
 	<br />
 
-	<c:if test="${ not empty errorMessage }">
+	<c:if test="${ not empty errorMessage }"><!--フィルター用のエラーメッセージ -->
 		<div class="errorMessage">
 			<ul>
 				<c:forEach items="${errorMessage}" var="message">
-					<li><FONT color="	#ff0000"><c:out value="${message}" /></FONT>
+					<li><FONT color="	#ff0000"><c:out value="${errorMessage}" /></FONT>
+				</c:forEach>
+			</ul>
+			<c:remove var="errorMessage" scope="session" />
+		</div>
+	</c:if>
+
+
+	<c:if test="${ not empty errorMessages }"><!--コメント用のエラーメッセージ -->
+		<div class="errorMessages">
+			<ul>
+				<c:forEach items="${errorMessages}" var="message">
+					<li><FONT color="	#ff0000"><c:out value="${errorMessages}" /></FONT>
 				</c:forEach>
 			</ul>
 		</div>
-		<c:remove var="errorMessage" scope="session" />
+		<c:remove var="errorMessages" scope="session" />
 	</c:if>
+
+
 
 
 	<form action="./" method="get">
@@ -65,21 +79,11 @@
 
 			</div>
 			<div class="text">
-				<c:out value="${message.text}" />
+				 <c:out value="${message.text}" />
 				<br />
 			</div>
 			<br />
 			<br />
-			<c:if test="${ not empty errorMessages }">
-				<div class="errorMessages">
-					<ul>
-						<c:forEach items="${errorMessages}" var="message">
-							<li><FONT color="	#ff0000"><c:out value="${message}" /></FONT>
-						</c:forEach>
-					</ul>
-				</div>
-				<c:remove var="errorMessages" scope="session" />
-			</c:if>
 
 			<br />
 			<br />
@@ -99,11 +103,12 @@
 			</c:forEach>
 			<div class="form-area">
 				<form action="Comment" method="post">
-					<textarea name="comment" cols="80" rows="5" class="comment-box"></textarea>
+					<textarea name="comment" cols="80" rows="5" id="text"><c:out value="${comment.text}"/></textarea>
 					<input type="hidden" name="messageId" value="${message.id}">
-					<br /> <input type="submit" value="コメントを投稿"> <br /> <br />
+					<br /> <input type="submit" value="コメントする"> <br /> <br />
 				</form>
 			</div>
+			<hr>
 		</c:forEach>
 	</div>
 	<div class="copyright">Copyright(c)Ryosuke Ando</div>

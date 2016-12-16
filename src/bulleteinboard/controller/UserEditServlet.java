@@ -31,10 +31,9 @@ public class UserEditServlet extends HttpServlet{
 
 		HttpSession session = request.getSession();
 		String id = request.getParameter("id");
-		if (session.getAttribute("editUser") == null) {
+
 		User editUser = new UserService().getUser(Integer.parseInt(id));
 		session.setAttribute("editUser", editUser);
-		}
 
 		List<Branch> branches = new BranchService().getBranches();
 		request.setAttribute("branches", branches);
@@ -53,10 +52,10 @@ public class UserEditServlet extends HttpServlet{
 
 		HttpSession session = request.getSession();
 
-		User editUser = getEditUser(request);
-		session.setAttribute("editUser", editUser);
+//		User editUser = getEditUser(request);
 
 		if (isValid(request, messages) == true) {
+			User editUser = getEditUser(request);
 			try{
 				new UserService().update(editUser);
 			}catch(NoRowsUpdatedRuntimeException e){
@@ -66,14 +65,19 @@ public class UserEditServlet extends HttpServlet{
 				response.sendRedirect("edit");
 			}
 
-			session.setAttribute("loginUser", editUser);
-			session.removeAttribute("editUser");
-
+			request.setAttribute("editUser", editUser);
 			response.sendRedirect("administer");
 			return;
 		}else{
+			List<Branch> branches = new BranchService().getBranches();
+			request.setAttribute("branches", branches);
+			List<Department>departments = new DepartmentService().getDepatments();
+			request.setAttribute("departments", departments);
+
+			User editUser = getEditUser(request);
+			request.setAttribute("editUser", editUser);
 			session.setAttribute("errorMessages", messages);
-			response.sendRedirect("edit");
+			request.getRequestDispatcher("userEdit.jsp").forward(request, response);
 		}
 	}
 

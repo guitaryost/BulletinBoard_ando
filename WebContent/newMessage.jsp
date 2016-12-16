@@ -18,18 +18,22 @@
 				<li><FONT color="	#ff0000"><c:out value="${message}" /></FONT>
 			</c:forEach>
 		</ul>
+		<c:remove var="errorMessages" scope="session"/>
 	</div>
-	<c:remove var="errorMessages" scope="session"/>
 </c:if>
 	<div class="form-area">
 			<form action="newMessage" method="post"><br />
-				<label for="title">タイトル</label><br />
-				<input name="title" value="${newMessage.title}" id="title" size="50"/> <br /><br />
-				<label for="message">本文</label><br />
-				<textarea name="message" rows="5"  cols="100" class="text-box" ></textarea><br /><br />
-				<label for="category">カテゴリー</label><br />
+				<div>タイトル</div>
+				<input name="title" value="${newMessage.title}" id="title" size="50"/>
+				 <br />
+				 <br />
+				<div>本文</div>
+				<textarea name="text" rows="5" cols="100" id="text"><c:out value="${newMessage.text}"/></textarea>
+				<br />
+				<br />
+				<div>カテゴリー</div>
 				<input name="category"value="${newMessage.category}" id="category" size="20"/> <br /><br />
-				<c:remove var="message" scope="session"/>
+
 				<input type="submit" value="投稿する">
 			</form>
 	</div>
