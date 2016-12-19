@@ -5,6 +5,8 @@ import static bulleteinboard.utils.DBUtil.*;
 
 import java.sql.Connection;
 
+import org.apache.commons.lang.StringUtils;
+
 import bulleteinboard.bean.User;
 import bulleteinboard.dao.UserDao;
 import bulleteinboard.utils.CipherUtil;
@@ -84,13 +86,38 @@ public class UserService {
 		try {
 			connection = getConnection();
 
-			String encPassword = CipherUtil.encrypt(editUser.getPassword());
-			editUser.setPassword(encPassword);
+			if(!StringUtils.isEmpty(editUser.getPassword())) {
+				String encPassword = CipherUtil.encrypt(editUser.getPassword());
+				editUser.setPassword(encPassword);
+			}
 
 			UserDao userDao = new UserDao();
 			userDao.update(connection, editUser);
 
 			commit(connection);
+		} catch (RuntimeException e) {
+			rollback(connection);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			throw e;
+		} finally {
+			close(connection);
+		}
+	}
+
+	public User getUser(String loginId){
+
+		Connection connection = null;
+		try{
+			connection = getConnection();
+
+			UserDao userDao = new UserDao();
+			User user = userDao.getUser(connection, loginId);
+
+			commit(connection);
+
+			return user;
 		} catch (RuntimeException e) {
 			rollback(connection);
 			throw e;

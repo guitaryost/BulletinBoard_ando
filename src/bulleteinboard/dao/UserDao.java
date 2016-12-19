@@ -10,6 +10,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import bulleteinboard.bean.User;
 import bulleteinboard.exception.NoRowsUpdatedRuntimeException;
 import bulleteinboard.exception.SQLRuntimeException;
@@ -189,14 +191,18 @@ public class UserDao {
 
 		PreparedStatement ps = null;
 		try {
+
 			StringBuilder sql = new StringBuilder();
 			sql.append("UPDATE users SET");
 			sql.append(" login_id = ?");
-			sql.append(", password = ?");
 			sql.append(", name = ?");
 			sql.append(", branch_id = ?");
 			sql.append(", department_id = ?");
 			sql.append(", account = ?");
+			//空だったらパスワードをセット
+			if(!StringUtils.isEmpty(editUser.getPassword())){
+				sql.append(", password = ?");
+			}
 			sql.append(", insert_date = CURRENT_TIMESTAMP");
 			sql.append(", update_date = CURRENT_TIMESTAMP");
 
@@ -209,17 +215,48 @@ public class UserDao {
 			ps = connection.prepareStatement(sql.toString());
 
 			ps.setString(1, editUser.getLoginId());
-			ps.setString(2, editUser.getPassword());
-			ps.setString(3, editUser.getName());
-			ps.setInt(4, editUser.getBranchId());
-			ps.setInt(5, editUser.getDepartmentId());
-			ps.setBoolean(6, editUser.isAccount());
-			ps.setInt(7, editUser.getId());
-			ps.setTimestamp(8, new Timestamp(editUser.getUpdateDate().getTime()));
+			ps.setString(2, editUser.getName());
+			ps.setInt(3, editUser.getBranchId());
+			ps.setInt(4, editUser.getDepartmentId());
+			ps.setBoolean(5, editUser.isAccount());
+			//空じゃなかったら、パスワードを取得
+			if(!StringUtils.isEmpty(editUser.getPassword())){
+				 ps.setString(6, editUser.getPassword());
+				 ps.setInt(7, editUser.getId());
+				ps.setTimestamp(8, new Timestamp(editUser.getUpdateDate().getTime()));
+			}else{//空だったらセットの順番が変える
+				ps.setInt(6, editUser.getId());
+				ps.setTimestamp(7, new Timestamp(editUser.getUpdateDate().getTime()));
+			}
+
 
 			int count = ps.executeUpdate();
 			if (count == 0) {
 				throw new NoRowsUpdatedRuntimeException();
+			}
+		} catch (SQLException e) {
+			throw new SQLRuntimeException(e);
+		} finally {
+			close(ps);
+		}
+	}
+
+	public User getUser(Connection connection, String loginId){
+
+		PreparedStatement ps = null;
+		try{
+			String sql = "SELECT * FROM users WHERE login_id = ?";
+
+			ps = connection.prepareStatement(sql);
+			ps.setString(1, loginId);
+			ResultSet rs = ps.executeQuery();
+			List<User> userList = toUserList(rs);
+			if (userList.isEmpty() == true) {
+				return null;
+			} else if (2 <= userList.size()) {
+				throw new IllegalStateException("2 <= userList.size()");
+			} else {
+				return userList.get(0);
 			}
 		} catch (SQLException e) {
 			throw new SQLRuntimeException(e);

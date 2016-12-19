@@ -48,12 +48,13 @@ public class TopServlet extends HttpServlet {
 		List<UserMessage> messages = new MessageService().getMessage(category, fromDate, toDate);
 		List<UserComment> comments = new CommentService().getComments();
 		List<Message> categories = new MessageService().getCategories();
-		Message oldDate = new MessageService().getOldDate();
 
 		request.setAttribute("messages", messages);
 		request.setAttribute("comments", comments);
 		request.setAttribute("categories", categories);
-		request.setAttribute("oldDates", oldDate);
+		request.setAttribute("selectedCategory", category);
+		request.setAttribute("fromDate", fromDate);
+		request.setAttribute("toDate", toDate);
 
 
 		request.getRequestDispatcher("/top.jsp").forward(request, response);

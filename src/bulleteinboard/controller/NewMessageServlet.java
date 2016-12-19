@@ -40,10 +40,10 @@ public class NewMessageServlet extends HttpServlet{
 		User user = (User)session.getAttribute("loginUser");
 
 		Message message = new Message();
-		message.setTitle(request.getParameter("title"));
+		message.setTitle(request.getParameter("title").trim());
 		message.setUserId(user.getId());
-		message.setText(request.getParameter("text"));
-		message.setCategory(request.getParameter("category"));
+		message.setText(request.getParameter("text").trim());
+		message.setCategory(request.getParameter("category").trim());
 
 		if (isValid(request, messages) == true){
 			new MessageService().register(message);
@@ -57,27 +57,29 @@ public class NewMessageServlet extends HttpServlet{
 	}
 
 	private boolean isValid(HttpServletRequest request, List<String> messages){
-		String title = request.getParameter("title");
-		String text = request.getParameter("text");
-		String category = request.getParameter("category");
+		//.trim()で半角スペースを除去
+		String title = request.getParameter("title").trim();
+		String text = request.getParameter("text").trim();
+		String category = request.getParameter("category").trim();
 
-		if(StringUtils.isEmpty(title) == true){
+		if(StringUtils.isEmpty(title)){
 			messages.add("タイトルを入力してください");
 		}
 		if (50 < title.length()) {
 			messages.add("タイトルは50文字以下で入力してください");
 		}
 
-		if(StringUtils.isEmpty(text) == true){
+		if(StringUtils.isEmpty(text)){
 			messages.add("本文を入力してください");
 		}
 		if (1000 < text.length()) {
 			messages.add("本文は1000文字以下で入力してください");
 		}
 
-		if(StringUtils.isEmpty(category) == true){
+		if(StringUtils.isEmpty(category)){
 			messages.add("カテゴリーを入力してください");
 		}
+
 		if (10 < category.length()) {
 			messages.add("カテゴリーは10文字以下で入力してください");
 		}

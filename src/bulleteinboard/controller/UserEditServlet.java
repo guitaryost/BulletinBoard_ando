@@ -96,15 +96,51 @@ public class UserEditServlet extends HttpServlet{
 	}
 
 	private boolean isValid(HttpServletRequest request, List<String> messages){
-		String name = request.getParameter("name");
 		String loginId = request.getParameter("loginId");
+		String name = request.getParameter("name");
 
-		if(StringUtils.isEmpty(name) == true){
-			messages.add("氏名を入力してください");
-		}
-		if(StringUtils.isEmpty(loginId) == true){
+		String password = request.getParameter("password");
+		String password_confirm = request.getParameter("password_confirm");
+
+		User user = new UserService().getUser(loginId);
+
+		HttpSession session = request.getSession();
+		User editUser = (User)session.getAttribute("editUser");
+
+		if(StringUtils.isEmpty(loginId)) {
 			messages.add("ログインIDを入力してください");
+		}else if(!loginId.matches("[0-9a-zA-Z]+$")) {
+			messages.add("ログインIDは半角英数字で登録してください");
+		}else if (6 > loginId.length() || loginId.length() > 20) {
+			messages.add("ログインIDは6文字以上20文字以下で登録してください");
 		}
+		if(user != null && user.getId() != editUser.getId()) {
+			messages.add("そのログインIDはすでに存在しています");
+		}
+
+		if(StringUtils.isEmpty(name)) {
+			messages.add("氏名を入力してください");
+		}else if (name.length() > 10) {
+			messages.add("名前は10文字以下で登録してください");
+		}
+
+		if(!StringUtils.isEmpty(password) || !StringUtils.isEmpty(password_confirm)) {
+			if(StringUtils.isEmpty(password)) {
+				messages.add("パスワードを入力してください");
+			}else if(6 > password.length() || password.length() > 255) {
+				messages.add("パスワードは6文字以上255文字以下で登録してください");
+			}else if(!loginId.matches("^[^ -~｡-ﾟ]+$")) {
+				messages.add("パスワードは半角文字で登録してください");
+			}
+
+			if(StringUtils.isEmpty(password_confirm)) {
+				messages.add("確認用パスワードを入力してください");
+			}else if(!password.equals(password_confirm)) {
+				messages.add("パスワードと確認用パスワードが異なります");
+			}
+		}
+
+
 		if (messages.size() == 0) {
 			return true;
 		} else {

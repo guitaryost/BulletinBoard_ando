@@ -27,10 +27,10 @@
 	<input name="loginId" value="${editUser.loginId}" id="loginId"/><br />
 
 	<label for="password">パスワード</label>
-	<input name="password" type="password" id="password" /> <br />
+	<input name="password" type="password" id="password"/><br />
 
-		<label for="password">パスワード(確認用)</label>
-	<input name="password" type="password" id="password" /> <br />
+	<label for="password_confirm">パスワード(確認用)</label>
+	<input name="password_confirm" type="password" id="password_confirm"/><br />
 
 	<label for="name">氏名</label>
 	<input name="name" value="${editUser.name}" id="name"/><br />

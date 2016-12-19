@@ -74,28 +74,40 @@ public class SignUpServlet extends HttpServlet {
 	private boolean isValid(HttpServletRequest request, List<String> messages) {
 		String loginId = request.getParameter("login_id");
 		String password = request.getParameter("password");
+		String password_confirm = request.getParameter("password_confirm");
 		String name = request.getParameter("name");
 
+		User user = new UserService().getUser(loginId);
 
-
-		if (StringUtils.isEmpty(loginId) == true) {
+		if (StringUtils.isEmpty(loginId)) {
 			messages.add("ログインIDを入力してください");
-		}
-		if (6 > loginId.length() || loginId.length() > 20) {
+		}else if(!loginId.matches("[0-9a-zA-Z]+$")){
+			messages.add("ログインIDは半角英数字で登録してください");
+		}else if (6 > loginId.length() || loginId.length() > 20) {
 			messages.add("ログインIDは6文字以上20文字以下で登録してください");
 		}
-		if(!loginId.matches("[0-9a-zA-Z]+$")){
-			messages.add("ログインIDは半角英数字で登録してください");
+		if(user != null){
+			messages.add("そのIDはすでに存在しています");
 		}
 
-		if (StringUtils.isEmpty(password) == true) {
-			messages.add("パスワードを入力してください");
+		if(StringUtils.isEmpty(password)) {
+				messages.add("パスワードを入力してください");
+			}else if(6 > password.length() || password.length() > 255) {
+				messages.add("パスワードは6文字以上255文字以下で登録してください");
+				//半角文字以外だったらという表現の仕方
+			}else if(!loginId.matches("^[^ -~｡-ﾟ]+$")) {
+				messages.add("パスワードは半角文字で登録してください");
+			}
 
+			if(StringUtils.isEmpty(password_confirm)) {
+				messages.add("確認用パスワードを入力してください");
+			}else if(!password.equals(password_confirm)) {
+				messages.add("パスワードと確認用パスワードが異なります");
 		}
-		if (StringUtils.isEmpty(name) == true) {
+
+		if (StringUtils.isEmpty(name)) {
 			messages.add("名前を入力してください");
-		}
-		if (name.length() > 10) {
+		}else if (name.length() > 10) {
 			messages.add("名前は10文字以下で登録してください");
 		}
 

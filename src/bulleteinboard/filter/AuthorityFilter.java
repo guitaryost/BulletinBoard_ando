@@ -27,15 +27,17 @@ public class AuthorityFilter implements Filter{
 				HttpSession session = ((HttpServletRequest)request).getSession();
 				User user = (User) session.getAttribute("loginUser");
 
-				List<String> errorMessage = new ArrayList<String>();
-				errorMessage.add("！権限がありません");
+				if(user != null){
+					List<String> errorMessage = new ArrayList<String>();
+					errorMessage.add("！権限がありません");
 
-				//権限がなければホームに飛ばす
-				if(user.getBranchId() != 1 || user.getDepartmentId() != 1){
-					session.setAttribute("errorMessage", errorMessage);
-					((HttpServletResponse)response).sendRedirect("./");
+					//権限がなければホームに飛ばす
+					if(user.getBranchId() != 1 || user.getDepartmentId() != 1){
+						session.setAttribute("errorMessage", errorMessage);
+						((HttpServletResponse)response).sendRedirect("./");
 
-					return;
+						return;
+					}
 				}
 
 				//権限があれば各Servletを実行させる
