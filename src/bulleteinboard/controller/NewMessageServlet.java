@@ -40,6 +40,7 @@ public class NewMessageServlet extends HttpServlet{
 		User user = (User)session.getAttribute("loginUser");
 
 		Message message = new Message();
+		//値をセットするときも.trimを忘れずに
 		message.setTitle(request.getParameter("title").trim());
 		message.setUserId(user.getId());
 		message.setText(request.getParameter("text").trim());
@@ -57,7 +58,7 @@ public class NewMessageServlet extends HttpServlet{
 	}
 
 	private boolean isValid(HttpServletRequest request, List<String> messages){
-		//.trim()で半角スペースを除去
+		//.trim()でそれぞれの前後に半角スペースが入力されても除去
 		String title = request.getParameter("title").trim();
 		String text = request.getParameter("text").trim();
 		String category = request.getParameter("category").trim();

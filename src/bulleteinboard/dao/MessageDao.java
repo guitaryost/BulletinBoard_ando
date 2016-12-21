@@ -43,8 +43,6 @@ public class MessageDao {
 			ps.setString(3, message.getText());
 			ps.setString(4, message.getCategory());
 
-			System.out.println(ps);
-
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw new SQLRuntimeException(e);

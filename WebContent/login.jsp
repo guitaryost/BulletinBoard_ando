@@ -11,28 +11,30 @@
 <body>
 <div class="main-contents"></div>
 
+
+<form action="login" method="post"><br />
+<div class="header">
+	<div><center><font size="5">【掲示板】</font></center></div>
+	<br />
+</div>
 <c:if test="${ not empty errorMessages }">
 	<div class="errorMessages">
-		<ul>
+		<ul style ="list-style:none;">
 			<c:forEach items="${errorMessages}" var="message">
-				<li><FONT color="#ff0000"><c:out value="${message}" /></FONT>
+				<li><center><FONT color="#ff0000"><c:out value="${message}" /></FONT></center>
 			</c:forEach>
 		</ul>
 	</div>
 	<c:remove var="errorMessages" scope="session"/>
 </c:if>
-<form action="login" method="post"><br />
-	<label for="loginId">ログインID</label>
-	<input name="loginId" value="${loginId}" id="loginId"/> <br />
-
-	<label for="password">パスワード</label>
-	<input name="password" type="password" id="password"/> <br />
-
+	<center>ログインID<input name="loginId" value="${loginId}" id="loginId" /></center>
+<br />
+	<center>パスワード<input  name="password" type="password" id="password"  /></center>
+<br />
+<br />
 	<c:remove var="loginId" scope="session"/>
-
-	<input type="submit" value="ログイン" /> <br />
-
+	<center><input type="submit" value="ログイン" /></center><br />
 </form>
-<div class="copyright">Copyright(c)Ryosuke Ando</div>
+<div class="copyright"><center>Copyright(c)Ryosuke Ando</center></div>
 </body>
 </html>

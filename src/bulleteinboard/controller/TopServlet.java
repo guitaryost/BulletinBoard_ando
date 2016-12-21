@@ -31,18 +31,25 @@ public class TopServlet extends HttpServlet {
 		String category = request.getParameter("category");
 		String fromDate = request.getParameter("fromDate");
 		String toDate = request.getParameter("toDate");
-
+		request.setAttribute("fromDate", fromDate);
+		request.setAttribute("toDate", toDate);
 
 		if(StringUtils.isEmpty(fromDate)) {
 			// fromDateが空・NULLだったら、DBから一番古い日付を取得し、セットする
 			String date = new MessageService().getOldDate().getInsertDate().toString();
 			fromDate = date;
+		}else{
+			fromDate += " 00:00:00 ";
+
 		}
+
 
 		if(StringUtils.isEmpty(toDate)) {
 			// toDateが空・NULLだったら、今の時刻を取得し、セットする
 			String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 			toDate = date;
+		}else{
+			toDate += " 23:59:59 ";
 		}
 
 		List<UserMessage> messages = new MessageService().getMessage(category, fromDate, toDate);
@@ -53,8 +60,6 @@ public class TopServlet extends HttpServlet {
 		request.setAttribute("comments", comments);
 		request.setAttribute("categories", categories);
 		request.setAttribute("selectedCategory", category);
-		request.setAttribute("fromDate", fromDate);
-		request.setAttribute("toDate", toDate);
 
 
 		request.getRequestDispatcher("/top.jsp").forward(request, response);

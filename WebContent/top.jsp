@@ -13,9 +13,10 @@
 <body>
 	<div class="main-contents">
 		<div class="header">
-
+			<div><font size="5">【トップページ】</font></div>
+			<br />
 			<c:if test="${ not empty loginUser }">
-				<div>＜${loginUser.name}＞でログインしています</div>
+				<div>＜${loginUser.name}＞としてログインしています</div>
 				<br />
 				<a href="newMessage">新規投稿</a>
 				<a href="administer">ユーザー管理</a>
@@ -29,7 +30,7 @@
 
 	<c:if test="${ not empty errorMessage }"><!--フィルター用のエラーメッセージ -->
 		<div class="errorMessage">
-			<ul>
+			<ul style ="list-style:none;">
 				<c:forEach items="${errorMessage}" var="message">
 					<li><FONT color="	#ff0000"><c:out value="${errorMessage}" /></FONT>
 				</c:forEach>
@@ -41,7 +42,7 @@
 
 	<c:if test="${ not empty errorMessages }"><!--コメント用のエラーメッセージ -->
 		<div class="errorMessages">
-			<ul>
+			<ul style ="list-style:none;">
 				<c:forEach items="${errorMessages}" var="message">
 					<li><FONT color="	#ff0000"><c:out value="${errorMessages}" /></FONT>
 				</c:forEach>
@@ -70,11 +71,11 @@
 		<label>【日付選択】<input type="date" name="fromDate" value="${fromDate}">～<input type="date" name="toDate" value="${toDate}"></label>
 		<input type="submit" value="送信">
 	</form>
+	<form action="./" method="get">
+<input type="submit" value="検索条件をリセット">
+	</form>
 	<br />
 	<br />
-
-
-
 	<div class="messages">
 	＜投稿一覧＞
 	<hr noshade>
@@ -82,7 +83,7 @@
 
 			<div class="title_category">
 			<font size="-1">カテゴリー：<c:out value="${message.category}" /></font><br /><br />
-				<font color="blue" size="4"><b><c:out value="${message.title}" /></b></font>
+				<font size="4"><b><c:out value="${message.title}" /></b></font>
 			</div>
 
 			<div class="name-date">
@@ -91,11 +92,14 @@
 						pattern="yyyy/MM/dd HH:mm:ss" /></font><br />
 			</div>
 			<br />
-			<div class="text"><!--改行含めて表示fn:split -->
+			<!--改行含めて表示fn:split -->
 				<c:forEach var="s" items="${fn:split(message.text, '
-')}"><div>${s}</div></c:forEach>
+')}">
+					<div>
+						<c:out value="${s}"></c:out>
+					</div>
+				</c:forEach>
 				<br />
-			</div>
 			<br />
 			<br />
 
@@ -114,7 +118,7 @@
 					</div>
 					<div class="text"><!--改行含めて表示fn:split -->
 						<font size="-1"><c:forEach var="s" items="${fn:split(comment.text, '
-')}"><div>${s}</div></c:forEach></font><br /><br />
+')}"><div><c:out value="${s}"></c:out></div></c:forEach></font><br /><br />
 
 					</div>
 
@@ -122,7 +126,7 @@
 			</c:forEach>
 			<div class="form-area">
 				<form action="Comment" method="post">
-					<textarea name="comment" cols="80" rows="5" id="text"><c:out value="${comment.text}"/></textarea>
+					<textarea name="comment" cols="80" rows="5" id="text" ><c:out value="${comment.text}"/></textarea>
 					<input type="hidden" name="messageId" value="${message.id}">
 					<br /> <input type="submit" value="コメントする"> <br /> <br />
 				</form>

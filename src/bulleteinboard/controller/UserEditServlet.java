@@ -32,32 +32,52 @@ public class UserEditServlet extends HttpServlet{
 		HttpSession session = request.getSession();
 		String id = request.getParameter("id");
 
-		User editUser = new UserService().getUser(Integer.parseInt(id));
-		session.setAttribute("editUser", editUser);
+		//URLのパラメータがなかった場合の処理
+		if(StringUtils.isEmpty(id)){
+			response.sendRedirect("administer");
+		//URLのパラメータに数値以外の処理が入ったときの処理
+		}else if(!id.matches("[0-9]+$")){
+			response.sendRedirect("administer");
+		}else{
+			//ユーザーの情報を取得
+			User editUser = new UserService().getUser(Integer.parseInt(id));
+			//editUserがnull＝存在しないユーザーの情報
+			if(editUser != null) {
+			session.setAttribute("editUser", editUser);
 
-		List<Branch> branches = new BranchService().getBranches();
-		request.setAttribute("branches", branches);
-		List<Department>departments = new DepartmentService().getDepatments();
-		request.setAttribute("departments", departments);
+				List<Branch> branches = new BranchService().getBranches();
+				request.setAttribute("branches", branches);
+				List<Department>departments = new DepartmentService().getDepatments();
+				request.setAttribute("departments", departments);
 
-		request.getRequestDispatcher("userEdit.jsp").forward(request,response);
+				request.getRequestDispatcher("userEdit.jsp").forward(request,response);
+			}else{
+				response.sendRedirect("administer");
+			}
+		}
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
-
 		List<String> messages = new ArrayList<String>();
-
 		HttpSession session = request.getSession();
-
-//		User editUser = getEditUser(request);
 
 		if (isValid(request, messages) == true) {
 			User editUser = getEditUser(request);
 			try{
 				new UserService().update(editUser);
+
+				// 更新したユーザーがログインユーザーと同じなら、セッションに格納されている情報を更新する
+				User loginUser = (User)session.getAttribute("loginUser");
+				if(loginUser.getId() == editUser.getId()) {
+					// データベースから最新の情報を取得する
+					User updatedLoginUser = new UserService().getUser(loginUser.getId());
+					// セッションに格納する
+					session.setAttribute("loginUser", updatedLoginUser);
+				}
+
 			}catch(NoRowsUpdatedRuntimeException e){
 				session.removeAttribute("editUser");
 				messages.add("他の人によって更新されています。最新のデータを表示しました。データを確認して下さい。");
@@ -65,10 +85,11 @@ public class UserEditServlet extends HttpServlet{
 				response.sendRedirect("edit");
 			}
 
-			request.setAttribute("editUser", editUser);
 			response.sendRedirect("administer");
 			return;
+
 		}else{
+
 			List<Branch> branches = new BranchService().getBranches();
 			request.setAttribute("branches", branches);
 			List<Department>departments = new DepartmentService().getDepatments();
@@ -87,20 +108,20 @@ public class UserEditServlet extends HttpServlet{
 		HttpSession session = request.getSession();
 		User editUser = (User)session.getAttribute("editUser");
 
-		editUser.setName(request.getParameter("name"));
-		editUser.setLoginId(request.getParameter("loginId"));
-		editUser.setPassword(request.getParameter("password"));
+		editUser.setName(request.getParameter("name").trim());
+		editUser.setLoginId(request.getParameter("loginId").trim());
+		editUser.setPassword(request.getParameter("password").trim());
 		editUser.setBranchId(Integer.parseInt(request.getParameter("branch")));
 		editUser.setDepartmentId(Integer.parseInt(request.getParameter("department")));
 		return editUser;
 	}
 
 	private boolean isValid(HttpServletRequest request, List<String> messages){
-		String loginId = request.getParameter("loginId");
-		String name = request.getParameter("name");
+		String loginId = request.getParameter("loginId").trim();
+		String name = request.getParameter("name").trim();
 
-		String password = request.getParameter("password");
-		String password_confirm = request.getParameter("password_confirm");
+		String password = request.getParameter("password").trim();
+		String password_confirm = request.getParameter("password_confirm").trim();
 
 		User user = new UserService().getUser(loginId);
 
@@ -129,7 +150,7 @@ public class UserEditServlet extends HttpServlet{
 				messages.add("パスワードを入力してください");
 			}else if(6 > password.length() || password.length() > 255) {
 				messages.add("パスワードは6文字以上255文字以下で登録してください");
-			}else if(!loginId.matches("^[^ -~｡-ﾟ]+$")) {
+			}else if(password.matches("^[^ -~｡-ﾟ]+$")) {
 				messages.add("パスワードは半角文字で登録してください");
 			}
 

@@ -46,9 +46,9 @@ public class SignUpServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 
 		User user = new User();
-		user.setLoginId(request.getParameter("login_id"));
-		user.setPassword(request.getParameter("password"));
-		user.setName(request.getParameter("name"));
+		user.setLoginId(request.getParameter("login_id").trim());
+		user.setPassword(request.getParameter("password").trim());
+		user.setName(request.getParameter("name").trim());
 		user.setBranchId(Integer.parseInt(request.getParameter("branch")));
 		user.setDepartmentId(Integer.parseInt(request.getParameter("department")));
 		user.setAccount(Boolean.parseBoolean(request.getParameter("account")));
@@ -72,10 +72,10 @@ public class SignUpServlet extends HttpServlet {
 
 
 	private boolean isValid(HttpServletRequest request, List<String> messages) {
-		String loginId = request.getParameter("login_id");
-		String password = request.getParameter("password");
-		String password_confirm = request.getParameter("password_confirm");
-		String name = request.getParameter("name");
+		String loginId = request.getParameter("login_id").trim();
+		String password = request.getParameter("password").trim();
+		String password_confirm = request.getParameter("password_confirm").trim();
+		String name = request.getParameter("name").trim();
 
 		User user = new UserService().getUser(loginId);
 
@@ -94,8 +94,8 @@ public class SignUpServlet extends HttpServlet {
 				messages.add("パスワードを入力してください");
 			}else if(6 > password.length() || password.length() > 255) {
 				messages.add("パスワードは6文字以上255文字以下で登録してください");
-				//半角文字以外だったらという表現の仕方
-			}else if(!loginId.matches("^[^ -~｡-ﾟ]+$")) {
+				//全角=半角文字以外だったらという表現の仕方
+			}else if(password.matches("^[^ -~｡-ﾟ]+$")) {
 				messages.add("パスワードは半角文字で登録してください");
 			}
 

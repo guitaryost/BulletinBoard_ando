@@ -32,8 +32,6 @@ public class CommentDao {
 			ps.setInt(2, comment.getMessageId());
 			ps.setString(3, comment.getText());
 
-			System.out.println(ps);
-
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw new SQLRuntimeException(e);

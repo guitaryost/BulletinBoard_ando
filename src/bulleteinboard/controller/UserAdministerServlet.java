@@ -9,7 +9,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import bulleteinboard.bean.Branch;
+import bulleteinboard.bean.Department;
 import bulleteinboard.bean.User;
+import bulleteinboard.service.BranchService;
+import bulleteinboard.service.DepartmentService;
 import bulleteinboard.service.UserAdministerService;
 import bulleteinboard.service.UserService;
 
@@ -24,6 +28,11 @@ public class UserAdministerServlet extends HttpServlet{
 			HttpServletResponse response) throws ServletException, IOException {
 
 		List<User> users = new UserAdministerService().getUsers();
+		List<Branch> branches = new BranchService().getBranches();
+		request.setAttribute("branches", branches);
+		List<Department>departments = new DepartmentService().getDepatments();
+		request.setAttribute("departments", departments);
+
 		request.setAttribute("users", users);
 
 		request.getRequestDispatcher("/userAdminister.jsp").forward(request, response);
@@ -37,7 +46,6 @@ public class UserAdministerServlet extends HttpServlet{
 		user.setAccount(Boolean.parseBoolean(request.getParameter("account")));
 		user.setId(Integer.parseInt(request.getParameter("id")));
 		new UserService().stop(user);
-		System.out.println(user);
 		response.sendRedirect("administer");
 	}
 }

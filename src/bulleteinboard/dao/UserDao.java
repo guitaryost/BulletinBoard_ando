@@ -51,7 +51,6 @@ public class UserDao {
 			String sql = "SELECT * FROM users";
 				ps = connection.prepareStatement(sql);
 
-				System.out.println(ps.toString());
 				ResultSet rs = ps.executeQuery();
 				List<User> userList = toUserList(rs);
 				return userList;
